@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>番茄时钟 · 25 / 5</title>
+    <meta
+      name="description"
+      content="一个独立的番茄时钟页面：25 分钟专注，5 分钟休息，只在页面内计时和提示。"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Ccircle%20cx='32'%20cy='36'%20r='22'%20fill='%23b6402b'/%3E%3Cpath%20d='M32%2014c-2-6%204-10%208-10-1%205-3%208-8%2010z'%20fill='%232f6f57'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-mode="focus">
+    <main class="page">
+      <header class="intro">
+        <p class="eyebrow">Pomodoro</p>
+        <h1>番茄时钟</h1>
+        <p class="subtitle">专注 25 分钟，休息 5 分钟。计时和到点提示都只发生在这个页面里。</p>
+      </header>
+
+      <section class="timer-card" aria-labelledby="timerHeading">
+        <h2 class="visually-hidden" id="timerHeading">计时器</h2>
+
+        <div class="mode-switch" role="group" aria-label="选择阶段">
+          <button
+            type="button"
+            class="mode-button is-active"
+            data-mode="focus"
+            aria-pressed="true"
+          >
+            专注 · 25 分钟
+          </button>
+          <button
+            type="button"
+            class="mode-button"
+            data-mode="break"
+            aria-pressed="false"
+          >
+            休息 · 5 分钟
+          </button>
+        </div>
+
+        <div class="dial">
+          <svg class="ring" viewBox="0 0 320 320" aria-hidden="true" focusable="false">
+            <g transform="rotate(-90 160 160)">
+              <circle class="ring-track" cx="160" cy="160" r="140" pathLength="100"></circle>
+              <circle class="ring-progress" cx="160" cy="160" r="140" pathLength="100"></circle>
+            </g>
+          </svg>
+          <div class="readout">
+            <p class="phase" id="phaseLabel">专注</p>
+            <p class="time" id="timeDisplay" role="timer" aria-live="off">25:00</p>
+            <p class="state-hint" id="stateHint">点击开始，专注 25 分钟</p>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button type="button" class="button primary" id="startPauseButton">开始</button>
+          <button type="button" class="button secondary" id="resetButton">重置</button>
+        </div>
+
+        <p class="notice" id="notice" role="status" aria-live="polite" hidden></p>
+      </section>
+
+      <p class="page-footer">页面内计时与提示 · 不播放声音 · 不发送系统通知</p>
+    </main>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
