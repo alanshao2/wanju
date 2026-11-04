@@ -1,0 +1,10 @@
+{
+  "name": "wanju",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Small standalone web pages, starting with a pomodoro timer.",
+  "scripts": {
+    "test": "node --test pomodoro/timer.test.js"
+  }
+}
