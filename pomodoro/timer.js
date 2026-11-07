@@ -5,10 +5,12 @@
  */
 
 export const FOCUS_SECONDS = 25 * 60;
+export const SHORT_FOCUS_SECONDS = 15 * 60;
 export const BREAK_SECONDS = 5 * 60;
 
 export const MODES = {
   focus: { label: '专注', seconds: FOCUS_SECONDS },
+  shortFocus: { label: '专注', seconds: SHORT_FOCUS_SECONDS },
   break: { label: '休息', seconds: BREAK_SECONDS },
 };
 
@@ -16,8 +18,13 @@ export function durationFor(mode) {
   return (MODES[mode] ?? MODES.focus).seconds * 1000;
 }
 
-export function nextMode(mode) {
-  return mode === 'focus' ? 'break' : 'focus';
+/**
+ * A finished focus phase is followed by a break; a finished break returns to
+ * the focus length the user last selected, so a 15 minute cycle stays 15/5.
+ */
+export function nextMode(mode, focusMode = 'focus') {
+  if (mode !== 'break') return 'break';
+  return Object.hasOwn(MODES, focusMode) && focusMode !== 'break' ? focusMode : 'focus';
 }
 
 /** Format a number of remaining seconds as MM:SS (rounded up). */
@@ -34,6 +41,7 @@ export class PomodoroTimer {
     this.onTick = onTick;
     this.onComplete = onComplete;
     this.mode = 'focus';
+    this.focusMode = 'focus';
     this.remainingMs = durationFor(this.mode);
     this.deadline = null;
     this.running = false;
@@ -103,6 +111,7 @@ export class PomodoroTimer {
   setMode(mode) {
     if (!Object.hasOwn(MODES, mode)) return false;
     this.mode = mode;
+    if (mode !== 'break') this.focusMode = mode;
     this.running = false;
     this.deadline = null;
     this.remainingMs = this.totalMs;
@@ -125,7 +134,7 @@ export class PomodoroTimer {
     const completedMode = this.mode;
     this.running = false;
     this.deadline = null;
-    this.mode = nextMode(completedMode);
+    this.mode = nextMode(completedMode, this.focusMode);
     this.remainingMs = this.totalMs;
     const snapshot = this.snapshot();
     this.onComplete(completedMode, snapshot);

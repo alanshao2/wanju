@@ -6,6 +6,7 @@ import {
   FOCUS_SECONDS,
   MODES,
   PomodoroTimer,
+  SHORT_FOCUS_SECONDS,
   durationFor,
   formatTime,
   nextMode,
@@ -44,15 +45,20 @@ test('formatTime always renders MM:SS and never goes negative', () => {
   assert.equal(formatTime(-12), '00:00');
 });
 
-test('modes expose the requested 25 and 5 minute durations', () => {
+test('modes expose the 25, 15 and 5 minute durations', () => {
   assert.equal(FOCUS_SECONDS, 1500);
+  assert.equal(SHORT_FOCUS_SECONDS, 900);
   assert.equal(BREAK_SECONDS, 300);
   assert.equal(MODES.focus.label, '专注');
+  assert.equal(MODES.shortFocus.label, '专注');
   assert.equal(MODES.break.label, '休息');
   assert.equal(durationFor('focus'), 1_500_000);
+  assert.equal(durationFor('shortFocus'), 900_000);
   assert.equal(durationFor('break'), 300_000);
   assert.equal(nextMode('focus'), 'break');
+  assert.equal(nextMode('shortFocus'), 'break');
   assert.equal(nextMode('break'), 'focus');
+  assert.equal(nextMode('break', 'shortFocus'), 'shortFocus');
 });
 
 test('a fresh timer starts idle on a full focus phase', () => {
@@ -130,6 +136,45 @@ test('finishing a break phase switches back to a fresh focus phase', () => {
   assert.equal(timer.remainingSeconds, 1500);
 });
 
+test('a 15 minute focus starts fresh and keeps the 15/5 cycle', () => {
+  const { timer, events, advance } = createTimer();
+  assert.equal(timer.setMode('shortFocus'), true);
+  assert.equal(timer.state, 'idle');
+  assert.equal(timer.remainingSeconds, 900);
+  assert.equal(timer.totalSeconds, 900);
+
+  timer.start();
+  advance(900_000);
+  timer.tick();
+
+  assert.equal(timer.mode, 'break');
+  assert.equal(timer.remainingSeconds, 300);
+
+  timer.start();
+  advance(300_000);
+  timer.tick();
+
+  assert.equal(timer.mode, 'shortFocus');
+  assert.equal(timer.remainingSeconds, 900);
+  assert.deepEqual(events.completes, ['shortFocus', 'break']);
+});
+
+test('switching back to 25 minutes makes the next cycle 25/5 again', () => {
+  const { timer, advance } = createTimer();
+  timer.setMode('shortFocus');
+  timer.setMode('focus');
+  timer.start();
+  advance(1_500_000);
+  timer.tick();
+
+  timer.start();
+  advance(300_000);
+  timer.tick();
+
+  assert.equal(timer.mode, 'focus');
+  assert.equal(timer.remainingSeconds, 1500);
+});
+
 test('stale ticks after completion do not emit a second completion', () => {
   const { timer, events, advance } = createTimer();
   timer.start();
@@ -157,6 +202,11 @@ test('reset restores the full current phase and stops the timer', () => {
 test('setMode switches phases and rejects unknown modes', () => {
   const { timer } = createTimer();
   timer.start();
+  assert.equal(timer.setMode('shortFocus'), true);
+  assert.equal(timer.mode, 'shortFocus');
+  assert.equal(timer.state, 'idle');
+  assert.equal(timer.remainingSeconds, 900);
+
   assert.equal(timer.setMode('break'), true);
   assert.equal(timer.mode, 'break');
   assert.equal(timer.state, 'idle');

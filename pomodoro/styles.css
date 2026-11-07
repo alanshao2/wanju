@@ -107,7 +107,7 @@ h1 {
 
 .mode-switch {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
   width: 100%;
   max-width: 400px;
@@ -120,12 +120,13 @@ h1 {
   appearance: none;
   border: 0;
   border-radius: 999px;
-  padding: 10px 12px;
+  padding: 10px 6px;
   background: transparent;
   color: var(--muted);
   font: inherit;
-  font-size: 0.9rem;
+  font-size: 0.86rem;
   font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
   transition:
     background 180ms ease,
@@ -307,12 +308,23 @@ h1 {
     border-radius: 28px;
   }
 
+  .mode-button {
+    padding: 9px 4px;
+    font-size: 0.82rem;
+  }
+
   .dial {
     width: min(280px, 78vw);
   }
 
   .subtitle {
     font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 350px) {
+  .mode-button {
+    font-size: 0.7rem;
   }
 }
 
