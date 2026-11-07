@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>番茄时钟 · 25 / 5</title>
+    <title>番茄时钟 · 25 / 15 / 5</title>
     <meta
       name="description"
-      content="一个独立的番茄时钟页面：25 分钟专注，5 分钟休息，只在页面内计时和提示。"
+      content="一个独立的番茄时钟页面：25 或 15 分钟专注，5 分钟休息，只在页面内计时和提示。"
     />
     <link
       rel="icon"
@@ -19,20 +19,28 @@
       <header class="intro">
         <p class="eyebrow">Pomodoro</p>
         <h1>番茄时钟</h1>
-        <p class="subtitle">专注 25 分钟，休息 5 分钟。计时和到点提示都只发生在这个页面里。</p>
+        <p class="subtitle">专注 25 或 15 分钟，休息 5 分钟。计时和到点提示都只发生在这个页面里。</p>
       </header>
 
       <section class="timer-card" aria-labelledby="timerHeading">
         <h2 class="visually-hidden" id="timerHeading">计时器</h2>
 
-        <div class="mode-switch" role="group" aria-label="选择阶段">
+        <div class="mode-switch" role="group" aria-label="选择阶段与专注时长">
           <button
             type="button"
             class="mode-button is-active"
             data-mode="focus"
             aria-pressed="true"
           >
-            专注 · 25 分钟
+            25 分钟专注
+          </button>
+          <button
+            type="button"
+            class="mode-button"
+            data-mode="shortFocus"
+            aria-pressed="false"
+          >
+            15 分钟专注
           </button>
           <button
             type="button"
@@ -40,7 +48,7 @@
             data-mode="break"
             aria-pressed="false"
           >
-            休息 · 5 分钟
+            5 分钟休息
           </button>
         </div>
 

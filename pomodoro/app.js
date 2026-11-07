@@ -1,6 +1,14 @@
-import { MODES, PomodoroTimer, formatTime } from './timer.js';
+import {
+  BREAK_SECONDS,
+  FOCUS_SECONDS,
+  MODES,
+  PomodoroTimer,
+  SHORT_FOCUS_SECONDS,
+  formatTime,
+} from './timer.js';
 
 const TICK_INTERVAL_MS = 250;
+const IDLE_TITLE = `番茄时钟 · ${FOCUS_SECONDS / 60} / ${SHORT_FOCUS_SECONDS / 60} / ${BREAK_SECONDS / 60}`;
 
 const els = {
   body: document.body,
@@ -30,7 +38,7 @@ function render({ mode, state, running, remainingSeconds, progress }) {
   els.phase.textContent = MODES[mode].label;
 
   if (running) {
-    els.hint.textContent = mode === 'focus' ? '专注中，保持节奏' : '休息中，放松一下';
+    els.hint.textContent = mode === 'break' ? '休息中，放松一下' : '专注中，保持节奏';
   } else if (state === 'paused') {
     els.hint.textContent = '已暂停，点击继续';
   } else {
@@ -50,7 +58,7 @@ function render({ mode, state, running, remainingSeconds, progress }) {
 
   document.title = running
     ? `${formatTime(remainingSeconds)} · ${MODES[mode].label} · 番茄时钟`
-    : '番茄时钟 · 25 / 5';
+    : IDLE_TITLE;
 }
 
 function handleComplete(completedMode, { mode }) {
@@ -58,7 +66,7 @@ function handleComplete(completedMode, { mode }) {
   const minutes = Math.round(next.seconds / 60);
 
   els.notice.textContent =
-    completedMode === 'focus'
+    completedMode !== 'break'
       ? `专注结束。休息 ${minutes} 分钟，点击「开始」进入休息。`
       : `休息结束。下一轮 ${minutes} 分钟专注，点击「开始」继续。`;
   els.notice.hidden = false;
